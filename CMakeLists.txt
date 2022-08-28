@@ -17,6 +17,6 @@ add_executable(expbinary
 )
 
 target_link_libraries(expbinary
-    PUBLIC
+    PRIVATE
         expconvert
 )

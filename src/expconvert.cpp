@@ -35,115 +35,113 @@ int Expconvert::optlevel(char opt) {
 
 std::string Expconvert::getstr(char splim)
 {
-    static std::stack<int> pos;
-    std::string sample = infix;
-    std::string result;
-    if(pos.empty())
+    static std::istringstream ss(infix);
+    std::string nowstr;
+    if(!std::getline(ss, nowstr, splim))
     {
-        pos.push(0);
+        nowstr = "er";
     }
-    if(pos.top() == sample.length() - 1)
-    {
-        return "er";
-    }
-    int nowpos = pos.top();
-    while(sample[nowpos] != splim && nowpos <= sample.length() - 1)
-    {
-        nowpos++;
-    }
-    result = sample.substr(pos.top(), nowpos);
-    pos.pop();
-    pos.push(++nowpos);
-    return result;
+    return nowstr;
 }
 
 std::string Expconvert::toPostfix()
 {
     std::stack<char> opts;
-    std::string nowstr = getstr(' ');
+    std::string nowstr;
     std::string postfix;
-    do
+    while((nowstr = getstr(' ')) != "er")
     {
-        // is operator
+        // 是操作符
         int optlv;
-        if( (optlv = optlevel(nowstr[0])) != -1)
+        if((optlv = optlevel(nowstr[0])) != -1)
         {
             switch(optlv)
             {
                 case 0:
                     if(nowstr == ")")
                     {
-                        char nowopt;
-                        while((nowopt = opts.top()) != '(')
+                        char opt;
+                        while(!opts.empty() && (opt = opts.top()) != '(')
                         {
+                            postfix += opts.top();
                             postfix += " ";
-                            postfix += nowopt;
                             opts.pop();
                         }
-                        //pop (
                         opts.pop();
-                        break;
                     }
-                    else if(nowstr == "(")
+                    else if (nowstr == "(")
+                    {
                         opts.push(nowstr[0]);
+                    }
                     break;
                 case 1:
                     opts.push(nowstr[0]);
                     break;
                 case 2:
-                    if(optlevel(opts.top()) >= 2)
+                    //
+                    if(!opts.empty() && optlevel(opts.top()) < 2 && opts.top() != '(')
                     {
-                        opts.push(nowstr[0]);
-                    }
-                    else if(optlevel(opts.top()) <= 1)
-                    {
-                        char pushopt = opts.top();
-                        while(pushopt != '(')
+                        char opt;
+                        while((opt = opts.top()) != '(')
                         {
-                            postfix += " ";
-                            postfix += pushopt;
+                            postfix += opts.top();
                             opts.pop();
-                            if(!opts.empty())
-                            {
-                                pushopt = opts.top();
-                            }
-                            else
-                                break;
                         }
                         opts.push(nowstr[0]);
                     }
-                case 3:
-                    if(optlevel(opts.top()) == 3)
+                    else if(opts.empty() || (!opts.empty() && opts.top() == '(' || optlevel(opts.top()) >= 2))
                     {
                         opts.push(nowstr[0]);
+                    }
+                    break;
+                case 3:
+                    if(!opts.empty() && (optlevel(opts.top()) == 3 || opts.top() == '('))
+                    {
+                        opts.push(nowstr[0]);
+                    }
+                    else if(!opts.empty() && optlevel(opts.top()) < 3 && opts.top() != '(')
+                    {
+                        char opt;
+                        while((opt = opts.top()) != '(')
+                        {
+                            postfix += opt;
+                            postfix += " ";
+                            opts.pop();
+                        }
                     }
                     else
                     {
-                        char pushopt = opts.top();
-                        while(pushopt != '(')
-                        {
-                            postfix += " ";
-                            postfix += pushopt;
-                            opts.pop();
-                            if(!opts.empty())
-                            {
-                                pushopt = opts.top();
-                            }
-                            else
-                                break;
-                        }
                         opts.push(nowstr[0]);
                     }
+                    break;
             }
-        }
-        // is operant
-        else if(nowstr != " ")
-        {
-            postfix += " ";
-            postfix += nowstr;
-        }
-        nowstr = getstr(' ');
-    }while(nowstr != "er");
 
+        }
+        // 是操作数
+        else
+        {
+            postfix += nowstr;
+            postfix += " ";
+        }
+    }
+    //清空运算符
+    while(!opts.empty())
+    {
+        if(opts.top() != '(')
+        {
+            postfix += opts.top();
+            postfix += " ";
+            opts.pop();
+        }
+        else
+        {
+            opts.pop();
+        }
+    }
     return postfix;
+}
+
+std::string Expconvert::toPrefix()
+{
+    
 }
