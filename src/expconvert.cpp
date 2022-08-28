@@ -39,6 +39,9 @@ std::string Expconvert::getstr(char splim)
     std::string nowstr;
     if(!std::getline(ss, nowstr, splim))
     {
+        ss.clear();
+        //装填新字符串
+        ss.str(infix);
         nowstr = "er";
     }
     return nowstr;
@@ -143,5 +146,8 @@ std::string Expconvert::toPostfix()
 
 std::string Expconvert::toPrefix()
 {
-    
+    std::string postfix = toPostfix();
+    postfix.erase(postfix.end() - 1);
+    std::reverse(postfix.begin(), postfix.end());
+    return postfix;
 }
