@@ -1,10 +1,10 @@
 //
 // Created by cooder on 2022/8/28.
 //
-#include"valcheck.h"
+#include"expcheck.h"
 #include<stack>
 
-bool iligalStrChek(std::string & str)
+bool expcheck::iligalStrChek(std::string & str)
 {
     /* 合法的表达式有：
      * 数字
@@ -33,11 +33,11 @@ bool iligalStrChek(std::string & str)
         {
             return false;
         }
-    }while(iter++ != end);
+    }while(++iter < end);
     return true;
 }
 
-bool bracketMatchingChek(std::string & str)
+bool expcheck::bracketMatchingChek(std::string & str)
 {
     std::stack<char> brket;
     std::string::const_iterator iter = str.begin();
@@ -67,7 +67,7 @@ bool bracketMatchingChek(std::string & str)
     return false;
 }
 
-std::string fixblank(std::string & str)
+std::string expcheck::fixblank(const std::string & str)
 {
     char prevstr = '#';
     std::string::const_iterator iter = str.begin();
