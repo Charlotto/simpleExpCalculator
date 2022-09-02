@@ -119,3 +119,7 @@ std::string expcheck::fixblank(const std::string & str)
     }
     return res;
 }
+
+bool expcheck::iligalExpChek(std::string &str) {
+
+}

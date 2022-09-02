@@ -3,6 +3,9 @@
 //
 #include"expconvert.h"
 #include"expcheck.h"
+#include"expcalc.h"
+#include"expio.h"
+
 int main ()
 {
     std::string str;
@@ -19,9 +22,9 @@ int main ()
         std::string postfix = ep.toPostfix();
         std::cout << postfix << std::endl;
         std::cout << "prefix :\n" << ep.toPrefix() << std::endl;
+        std::cout << "result = " << expcalc::calcPostfix(postfix) << std::endl;
     }
 
-    return 0;
 }
 
 /*
